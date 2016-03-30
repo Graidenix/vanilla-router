@@ -1,6 +1,6 @@
 {
   "name": "vanilla-router",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "JS vanilla Router",
   "main": "index.js",
   "scripts": {
@@ -8,9 +8,9 @@
   },
   "keywords": [
     "router",
-    "javascript",
-    "js",
-    "node"
+    "opa",
+    "webpack-router",
+    "browserify-router"
   ],
   "repository": {
     "type": "git",
