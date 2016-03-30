@@ -1,0 +1,24 @@
+{
+  "name": "vanilla-router",
+  "version": "0.0.1",
+  "description": "JS vanilla Router",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "router",
+    "javascript",
+    "js",
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Graidenix/vanilla-router.git"
+  },
+  "author": "grigore@odajiu.eu",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  }
+}
