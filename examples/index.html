@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vanilla router</title>
+</head>
+<body>
+<pre>Open console log to see the logs</pre>
+<script src="../index.js"></script>
+<script>
+    var router = new Router({
+        mode: 'hash',
+        page404: function (path) {
+            console.log('"/' + path + '" Page not found');
+        }
+    });
+
+    router.add(/^\/?$/, function () {
+        console.log('Home page');
+    });
+
+    router.add('hello/(:any)', function (name) {
+        console.log('Hello, ' + name);
+    });
+
+    router.add('about', function () {
+        console.log('About Page');
+    });
+
+    router.addUriListener();
+
+    router.navigateTo('hello/World');
+</script>
+</body>
+</html>

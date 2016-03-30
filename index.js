@@ -108,22 +108,35 @@ Router.prototype._getFragment = function () {
 };
 
 /**
+ *
+ * @returns {RegExp}
+ * @private
+ */
+Router.prototype._parseRouteRule = function(route) {
+    var uri = this._trimSlashes(route);
+    var rule = uri
+        .replace(/([\\\/\-\_\.])/g, "\\$1")
+        .replace(':word', '[a-zA-Z]+')
+        .replace(':num', '\d+')
+        .replace(':any', '[\\w\\-\\_\\.]+');
+
+    return new RegExp('^'+ rule + '$', 'i');
+};
+
+
+/**
  * Add route to routes list
  *
- * @param route
- * @param handler
+ * @param {string|RegExp} rule
+ * @param {function} handler
  * @returns {Router}
  */
-Router.prototype.add = function (route, handler) {
-    if (typeof route == 'function') {
-        handler = route;
-        route = '';
-    }
-    if (typeof route === "string") {
-        route = this._trimSlashes(route);
+Router.prototype.add = function (rule, handler) {
+    if (typeof rule === "string") {
+        rule = this._parseRouteRule(rule);
     }
 
-    this.routes.push({route: route, handler: handler});
+    this.routes.push({rule: rule, handler: handler});
     return this;
 };
 
@@ -136,7 +149,7 @@ Router.prototype.add = function (route, handler) {
 Router.prototype.remove = function (param) {
     var self = this;
     this.routes.some(function (route) {
-        if (route.handler === param || route.route.toString() === param.toString()) {
+        if (route.handler === param || route.rule.toString() === param.toString()) {
             self.routes.splice(i, 1);
             return false;
         }
@@ -170,7 +183,7 @@ Router.prototype.check = function (fragment) {
     fragment = this._trimSlashes(fragment) || this._getFragment();
     var self = this;
     var found = this.routes.some(function (route) {
-        var match = fragment.match(route.route);
+        var match = fragment.match(route.rule);
         if (match) {
             match.shift();
             route.handler.apply({}, match);
