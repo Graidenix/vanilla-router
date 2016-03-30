@@ -1,0 +1,21 @@
+{
+  "name": "vanilla-router",
+  "version": "0.0.1",
+  "description": "JS vanilla Router ",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "router",
+    "javascript",
+    "js",
+    "node"
+  ],
+  "author": "grigore@odajiu.com",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "mocha": "^2.4.5"
+  }
+}
