@@ -1,6 +1,6 @@
 {
   "name": "vanilla-router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JS vanilla Router",
   "main": "index.js",
   "scripts": {
