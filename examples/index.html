@@ -9,13 +9,14 @@
 <script src="../index.js"></script>
 <script>
     var router = new Router({
-        mode: 'hash',
+        mode: 'history',
+        root: '/VanillaRouter/examples/index.html',
         page404: function (path) {
             console.log('"/' + path + '" Page not found');
         }
     });
 
-    router.add(/^\/?$/, function () {
+    router.add('', function () {
         console.log('Home page');
     });
 

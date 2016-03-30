@@ -210,8 +210,8 @@ Router.prototype.addUriListener = function () {
     var self = this;
     this._current = self._getFragment();
 
-    window.clearInterval(this.interval);
-    this.interval = setInterval(function () {
+    window.clearInterval(this._interval);
+    this._interval = setInterval(function () {
         if (self._current !== self._getFragment()) {
             self.check(self._getFragment());
         }
@@ -225,7 +225,7 @@ Router.prototype.addUriListener = function () {
  * @returns {Router}
  */
 Router.prototype.removeUriListener = function () {
-    window.clearInterval(this.interval);
+    window.clearInterval(this._interval);
     this._current = null;
     return this;
 };
@@ -248,9 +248,9 @@ Router.prototype.navigateTo = function (path) {
     return this;
 };
 
-if (module && module.exports) {
+if (typeof module === "object" && module.exports) {
     module.exports = Router;
 }
-if (window) {
+if (typeof window === "object") {
     window.Router = Router;
 }
