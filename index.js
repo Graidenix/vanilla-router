@@ -115,12 +115,10 @@ Router.prototype._getFragment = function () {
  * @returns {Router}
  */
 Router.prototype.add = function (route, handler) {
-    if (typeof route == 'function') {
-        handler = route;
-        route = '';
-    }
     if (typeof route === "string") {
-        route = this._trimSlashes(route);
+        var uri = this._trimSlashes(route);
+        uri = uri.replace(/([\\\/\-\_\.])/g, "\\$1");
+        route = new RegExp('^'+ uri + '$', 'i');
     }
 
     this.routes.push({route: route, handler: handler});
@@ -235,9 +233,9 @@ Router.prototype.navigateTo = function (path) {
     return this;
 };
 
-if (module && module.exports) {
+if (typeof module === "object" && module.exports) {
     module.exports = Router;
 }
-if (window) {
+if (typeof window === "object") {
     window.Router = Router;
 }
