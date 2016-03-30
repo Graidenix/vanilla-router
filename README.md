@@ -18,11 +18,11 @@ var router = new Router({
     }
 });
 
-router.add(/^\/?$/, function () {
+router.add('', function () {
     console.log('Home page');
 });
 
-router.add(/^hello\/([a-z]+)$/i, function (name) {
+router.add('hello/(:any)', function (name) {
     console.log('Hello, ' + name);
 });
 
@@ -34,3 +34,4 @@ router.addUriListener();
 
 router.navigateTo('hello/World');
 ```
+

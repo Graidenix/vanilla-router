@@ -19,6 +19,20 @@ function Router(options) {
 }
 
 /**
+ * Define Router Page
+ *
+ * @param {string} uri
+ * @param {object} query
+ * @param {Array} params
+ * @constructor
+ */
+Router.Page = function (uri, query, params) {
+    this.uri = uri || '';
+    this.query = query || {};
+    this.params = params || []
+};
+
+/**
  * Sanitize options and add default values
  *
  * @param {object} options
@@ -45,7 +59,6 @@ Router.prototype._getSettings = function (options) {
     });
 
     return settings;
-
 };
 
 /**
@@ -55,8 +68,7 @@ Router.prototype._getSettings = function (options) {
  * @returns {string}
  */
 Router.prototype._getHistoryFragment = function () {
-    var uri = decodeURI(location.pathname + location.search);
-    var fragment = this._trimSlashes(uri).replace(/\?(.*)$/, '');
+    var fragment = decodeURI(window.location.pathname);
     if (this.root !== '/') {
         fragment = fragment.replace(this.root, '');
     }
@@ -70,7 +82,22 @@ Router.prototype._getHistoryFragment = function () {
  * @returns {string}
  */
 Router.prototype._getHashFragment = function () {
-    return this._trimSlashes(window.location.hash.substr(1));
+    var hash = window.location.hash.substr(1).replace(/(\?.*)$/, '');
+    return this._trimSlashes(hash);
+};
+
+/**
+ * Get current URI
+ *
+ * @private
+ * @returns {string}
+ */
+Router.prototype._getFragment = function () {
+    if (this.mode === 'history') {
+        return this._getHistoryFragment();
+    } else {
+        return this._getHashFragment();
+    }
 };
 
 /**
@@ -81,6 +108,9 @@ Router.prototype._getHashFragment = function () {
  * @returns {string}
  */
 Router.prototype._trimSlashes = function (path) {
+    if (typeof path !== 'string') {
+        return '';
+    }
     return path.toString().replace(/\/$/, '').replace(/^\//, '');
 };
 
@@ -93,35 +123,105 @@ Router.prototype._page404 = function (path) {
     this.notFoundHandler(path);
 };
 
+
 /**
- * Get current URI
+ * Convert the string route rule to RegExp rule
  *
+ * @param {string} route
+ * @returns {RegExp}
  * @private
- * @returns {string}
  */
-Router.prototype._getFragment = function () {
-    if (this.mode === 'history') {
-        return this._trimSlashes(this._getHistoryFragment());
+Router.prototype._parseRouteRule = function (route) {
+    if (typeof route !== "string") {
+        return route;
+    }
+    var uri = this._trimSlashes(route);
+    var rule = uri
+        .replace(/([\\\/\-\_\.])/g, "\\$1")
+        .replace(':word', '[a-zA-Z]+')
+        .replace(':num', '\d+')
+        .replace(':any', '[\\w\\-\\_\\.]+');
+
+    return new RegExp('^' + rule + '$', 'i');
+};
+
+/**
+ * Parse query string and return object for it
+ *
+ * @param {string} query
+ * @returns {object}
+ * @private
+ */
+Router.prototype._parseQuery = function (query) {
+    var _query = {};
+    if (typeof query !== 'string') {
+        return _query;
     }
 
-    return this._getHashFragment();
+    if (query[0] === '?') {
+        query = query.substr(1);
+    }
+
+    query.split('&').forEach(function (row) {
+        var parts = row.split('=');
+        if (parts[0] !== '') {
+            if (parts[1] === undefined) {
+                parts[1] = true;
+            }
+            _query[decodeURIComponent(parts[0])] = parts[1];
+        }
+    });
+    return _query;
+};
+
+/**
+ * Get query for `history` mode
+ *
+ * @returns {Object}
+ * @private
+ */
+Router.prototype._getHistoryQuery = function () {
+    return this._parseQuery(window.location.search);
+};
+
+/**
+ * Get query for `hash` mode
+ *
+ * @returns {Object}
+ * @private
+ */
+Router.prototype._getHashQuery = function () {
+    var index = window.location.hash.indexOf('?');
+    var query = (index !== -1) ? window.location.hash.substr(index) : "";
+    return this._parseQuery(query);
+};
+
+/**
+ * Get query as object
+ *
+ * @private
+ * @returns {Object}
+ */
+Router.prototype._getQuery = function () {
+    if (this.mode === 'history') {
+        return this._getHistoryQuery();
+    } else {
+        return this._getHashQuery();
+    }
 };
 
 /**
  * Add route to routes list
  *
- * @param route
- * @param handler
+ * @param {string|RegExp} rule
+ * @param {function} handler
  * @returns {Router}
  */
-Router.prototype.add = function (route, handler) {
-    if (typeof route === "string") {
-        var uri = this._trimSlashes(route);
-        uri = uri.replace(/([\\\/\-\_\.])/g, "\\$1");
-        route = new RegExp('^'+ uri + '$', 'i');
-    }
-
-    this.routes.push({route: route, handler: handler});
+Router.prototype.add = function (rule, handler) {
+    this.routes.push({
+        rule: this._parseRouteRule(rule),
+        handler: handler
+    });
     return this;
 };
 
@@ -133,12 +233,15 @@ Router.prototype.add = function (route, handler) {
  */
 Router.prototype.remove = function (param) {
     var self = this;
-    this.routes.some(function (route) {
-        if (route.handler === param || route.route.toString() === param.toString()) {
+    if (typeof param === 'string') {
+        param = this._parseRouteRule(param).toString();
+    }
+    this.routes.some(function (route, i) {
+        if (route.handler === param || route.rule.toString() === param) {
             self.routes.splice(i, 1);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     });
 
     return this;
@@ -161,25 +264,26 @@ Router.prototype.reset = function () {
 /**
  * Check the URL and execute handler for its route
  *
- * @param {string} fragment
  * @returns {Router}
  */
-Router.prototype.check = function (fragment) {
-    fragment = this._trimSlashes(fragment) || this._getFragment();
+Router.prototype.check = function () {
+    var fragment = this._getFragment();
     var self = this;
     var found = this.routes.some(function (route) {
-        var match = fragment.match(route.route);
+        var match = fragment.match(route.rule);
         if (match) {
             match.shift();
-            route.handler.apply({}, match);
-            self._current = fragment;
+            var query = self._getQuery();
+            var page = new Router.Page(fragment, query, match);
+            route.handler.apply(page, match);
+            self._current = btoa(window.location.href);
             return true;
         }
         return false;
     });
 
     if (!found) {
-        self._current = fragment;
+        self._current = btoa(window.location.href);
         this._page404(fragment);
     }
 
@@ -193,12 +297,12 @@ Router.prototype.check = function (fragment) {
  */
 Router.prototype.addUriListener = function () {
     var self = this;
-    this._current = self._getFragment();
+    this._current = btoa(window.location.href);
 
-    window.clearInterval(this.interval);
-    this.interval = setInterval(function () {
-        if (self._current !== self._getFragment()) {
-            self.check(self._getFragment());
+    window.clearInterval(this._interval);
+    this._interval = setInterval(function () {
+        if (self._current !== btoa(window.location.href)) {
+            self.check();
         }
     }, 100);
     return this;
@@ -210,7 +314,7 @@ Router.prototype.addUriListener = function () {
  * @returns {Router}
  */
 Router.prototype.removeUriListener = function () {
-    window.clearInterval(this.interval);
+    window.clearInterval(this._interval);
     this._current = null;
     return this;
 };
@@ -228,14 +332,13 @@ Router.prototype.navigateTo = function (path) {
     } else {
         window.location.hash = path;
     }
-
-    this.check(path);
-    return this;
+    return this.check();
 };
 
 if (typeof module === "object" && module.exports) {
     module.exports = Router;
 }
+
 if (typeof window === "object") {
     window.Router = Router;
 }
