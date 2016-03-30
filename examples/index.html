@@ -6,11 +6,12 @@
 </head>
 <body>
 <pre>Open console log to see the logs</pre>
+<h1 id="title"></h1>
 <script src="../index.js"></script>
 <script>
     var router = new Router({
-        mode: 'history',
-        root: '/VanillaRouter/examples/index.html',
+        mode: 'hash',
+        root: '/VanillaRouter/examples/index.html/',
         page404: function (path) {
             console.log('"/' + path + '" Page not found');
         }
@@ -18,15 +19,26 @@
 
     router.add('', function () {
         console.log('Home page');
+        document.getElementById('title').innerHTML = "Home Page";
+
+    });
+
+    router.add('search', function () {
+        console.log('Search Page');
+        document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
     });
 
     router.add('hello/(:any)', function (name) {
         console.log('Hello, ' + name);
+        document.getElementById('title').innerHTML = 'Hello, ' + name;
     });
 
     router.add('about', function () {
         console.log('About Page');
+        document.getElementById('title').innerHTML = 'About Page';
     });
+
+    router.remove('about');
 
     router.addUriListener();
 
