@@ -1,4 +1,4 @@
-/* global window, history */
+/* global window, module */
 
 /**
  * Router
@@ -12,7 +12,8 @@ function Router(options) {
 
     this.routes = settings.routes;
     this.notFoundHandler = settings.page404;
-    this.mode = (!history.pushState) ? 'hash' : settings.mode;
+    this.mode = (!window.history || !window.history.pushState) ? 'hash' : settings.mode;
+    console.log(window);
     this.root = settings.root === '/' ? '/' : '/' + this._trimSlashes(settings.root) + '/';
 
     return this;
@@ -122,7 +123,6 @@ Router.prototype._trimSlashes = function (path) {
 Router.prototype._page404 = function (path) {
     this.notFoundHandler(path);
 };
-
 
 /**
  * Convert the string route rule to RegExp rule
@@ -256,7 +256,7 @@ Router.prototype.reset = function () {
     this.routes = [];
     this.mode = null;
     this.root = '/';
-    this.disconnect();
+    this.removeUriListener();
 
     return this;
 };
@@ -335,10 +335,10 @@ Router.prototype.navigateTo = function (path) {
     return this.check();
 };
 
-if (typeof module === "object" && module.exports) {
-    module.exports = Router;
+if(typeof window !== "undefined") {
+    window.Router = Router;
 }
 
-if (typeof window === "object") {
-    window.Router = Router;
+if (typeof module !== "undefined") {
+    module.exports = Router;
 }

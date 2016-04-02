@@ -18,31 +18,24 @@
     });
 
     router.add('', function () {
-        console.log('Home page');
-        document.getElementById('title').innerHTML = "Home Page";
-
-    });
-
-    router.add('search', function () {
-        console.log('Search Page');
-        document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
-    });
-
-    router.add('hello/(:any)', function (name) {
-        console.log('Hello, ' + name);
-        document.getElementById('title').innerHTML = 'Hello, ' + name;
-    });
-
-    router.add('about', function () {
-        console.log('About Page');
-        document.getElementById('title').innerHTML = 'About Page';
-    });
-
-    router.remove('about');
-
-    router.addUriListener();
-
-    router.navigateTo('hello/World');
+                console.log('Home page');
+                document.getElementById('title').innerHTML = "Home Page";
+            })
+            .add('search', function () {
+                console.log('Search Page');
+                document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
+            })
+            .add('hello/(:any)', function (name) {
+                console.log('Hello, ' + name);
+                document.getElementById('title').innerHTML = 'Hello, ' + name;
+            })
+            .add('about', function () {
+                console.log('About Page');
+                document.getElementById('title').innerHTML = 'About Page';
+            })
+            .remove('about')
+            .addUriListener()
+            .navigateTo('hello/World');
 </script>
 </body>
 </html>
