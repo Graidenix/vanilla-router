@@ -2,6 +2,10 @@
 
 /**
  * Router
+ *
+ * @version: 0.1.1
+ * @author Graidenix
+ * 
  * @constructor
  *
  * @param {object} options
@@ -13,8 +17,8 @@ function Router(options) {
     this.routes = settings.routes;
     this.notFoundHandler = settings.page404;
     this.mode = (!window.history || !window.history.pushState) ? 'hash' : settings.mode;
-    console.log(window);
     this.root = settings.root === '/' ? '/' : '/' + this._trimSlashes(settings.root) + '/';
+    this._pageState = null;
 
     return this;
 }
@@ -25,12 +29,15 @@ function Router(options) {
  * @param {string} uri
  * @param {object} query
  * @param {Array} params
+ * @param {object} state
+ *
  * @constructor
  */
-Router.Page = function (uri, query, params) {
+Router.Page = function (uri, query, params, state) {
     this.uri = uri || '';
     this.query = query || {};
-    this.params = params || []
+    this.params = params || [];
+    this.state = state || null;
 };
 
 /**
@@ -256,6 +263,7 @@ Router.prototype.reset = function () {
     this.routes = [];
     this.mode = null;
     this.root = '/';
+    this._pageState = {};
     this.removeUriListener();
 
     return this;
@@ -274,9 +282,10 @@ Router.prototype.check = function () {
         if (match) {
             match.shift();
             var query = self._getQuery();
-            var page = new Router.Page(fragment, query, match);
+            var page = new Router.Page(fragment, query, match, self._pageState);
             route.handler.apply(page, match);
             self._current = btoa(window.location.href);
+            self._pageState = null;
             return true;
         }
         return false;
@@ -323,19 +332,22 @@ Router.prototype.removeUriListener = function () {
  * Navigate to a page
  *
  * @param {string} path
+ * @param {object} state
+ *
  * @returns {Router}
  */
-Router.prototype.navigateTo = function (path) {
+Router.prototype.navigateTo = function (path, state) {
     path = this._trimSlashes(path) || '';
+    this._pageState = state || null;
     if (this.mode === 'history') {
-        history.pushState(null, null, this.root + this._trimSlashes(path));
+        history.pushState(state, null, this.root + this._trimSlashes(path));
     } else {
         window.location.hash = path;
     }
     return this.check();
 };
 
-if(typeof window !== "undefined") {
+if (typeof window !== "undefined") {
     window.Router = Router;
 }
 

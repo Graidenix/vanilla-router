@@ -10,8 +10,8 @@
 <script src="../index.js"></script>
 <script>
     var router = new Router({
-        mode: 'hash',
-        root: '/VanillaRouter/examples/index.html/',
+        mode: 'history',
+        root: '/index.html',
         page404: function (path) {
             console.log('"/' + path + '" Page not found');
         }
@@ -26,7 +26,7 @@
                 document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
             })
             .add('hello/(:any)', function (name) {
-                console.log('Hello, ' + name);
+                console.log('Hello, ' + name, this.state);
                 document.getElementById('title').innerHTML = 'Hello, ' + name;
             })
             .add('about', function () {
@@ -34,8 +34,9 @@
                 document.getElementById('title').innerHTML = 'About Page';
             })
             .remove('about')
+            .check()
             .addUriListener()
-            .navigateTo('hello/World');
+            .navigateTo('hello/World', {foo: "bar"});
 </script>
 </body>
 </html>

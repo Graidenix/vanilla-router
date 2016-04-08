@@ -1,3 +1,6 @@
+## v0.1.1 / 2016-04-08
+- Added window state
+
 ## v0.0.4 / 2016-04-02
 - Bug fixing
 - Added unit tests
