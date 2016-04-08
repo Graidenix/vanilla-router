@@ -1,3 +1,10 @@
+## v0.1.1 / 2016-04-08
+- Added window state
+
+## v0.0.4 / 2016-04-02
+- Bug fixing
+- Added unit tests
+
 ## v0.0.3 / 2016-03-30
 - Added route wildcards :any, :num, :word
 - Parse query string
