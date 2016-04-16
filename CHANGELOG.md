@@ -1,3 +1,6 @@
+## v0.1.3 / 2016-04-16
+- added name-placeholder as variable to pass to callback
+
 ## v0.1.2 / 2016-04-16
 - Fixed multiple wildcards
 - Added name-placeholder as {placeholder}
