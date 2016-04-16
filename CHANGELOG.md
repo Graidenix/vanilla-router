@@ -1,3 +1,8 @@
+## v0.1.5 / 2016-04-16
+- Added back function
+- Added forward function
+- Added go function
+
 ## v0.1.4 / 2016-04-16
 - replaced listener interval with browser events
 
