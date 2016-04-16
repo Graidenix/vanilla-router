@@ -1,3 +1,6 @@
+## v0.1.4 / 2016-04-16
+- replaced listener interval with browser events
+
 ## v0.1.3 / 2016-04-16
 - added name-placeholder as variable to pass to callback
 

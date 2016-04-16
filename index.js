@@ -307,14 +307,17 @@ Router.prototype.check = function () {
  */
 Router.prototype.addUriListener = function () {
     var self = this;
-    this._current = btoa(window.location.href);
 
-    window.clearInterval(this._interval);
-    this._interval = setInterval(function () {
-        if (self._current !== btoa(window.location.href)) {
+    if (self.mode === 'history') {
+        window.onpopstate = function () {
             self.check();
         }
-    }, 100);
+    } else {
+        window.onhashchange = function () {
+            self.check();
+        }
+    }
+
     return this;
 };
 
@@ -324,8 +327,8 @@ Router.prototype.addUriListener = function () {
  * @returns {Router}
  */
 Router.prototype.removeUriListener = function () {
-    window.clearInterval(this._interval);
-    this._current = null;
+    window.onpopstate = null;
+    window.onhashchange = null;
     return this;
 };
 

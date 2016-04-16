@@ -1,10 +1,5 @@
-## v0.1.4
-To add back and go actions
-
 ## v0.1.5
-To update listener with proper window events
-   - window.onhashchange
-   - window.onpopstate
+To add back and go actions
    
 ## v1.0.0
 To add dist folder with minified and dev version
