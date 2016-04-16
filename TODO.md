@@ -1,7 +1,7 @@
-## v0.1.2
+## v0.1.3
 To add back and go actions
 
-## v0.1.3
+## v0.1.4
 To update listener with proper window events
    - window.onhashchange
    - window.onpopstate

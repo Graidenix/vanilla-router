@@ -1,3 +1,7 @@
+## v0.1.2 / 2016-04-16
+- Fixed multiple wildcards
+- Added name-placeholder as {placeholder}
+
 ## v0.1.1 / 2016-04-08
 - Added window state
 

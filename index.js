@@ -147,7 +147,7 @@ Router.prototype._parseRouteRule = function (route) {
         .replace(/([\\\/\-\_\.])/g, "\\$1")
         .replace(/\:word/g, '[a-zA-Z]+')
         .replace(/\:num/g, '\d+')
-        .replace(/\{[a-zA-Z]+\}/, ':any')
+        .replace(/\{[a-zA-Z]+\}/g, ':any')
         .replace(/\:any/g, '[\\w\\-\\_\\.]+');
 
     return new RegExp('^' + rule + '$', 'i');
