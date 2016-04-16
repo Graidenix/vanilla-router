@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 0.1.4
+ * @version: 0.1.5
  * @author Graidenix
  *
  * @constructor
@@ -374,26 +374,46 @@ Router.prototype.navigateTo = function (path, state) {
     return this;
 };
 
-
+/**
+ * Go Back in browser history
+ * Simulate "Back" button
+ * 
+ * @returns {Router}
+ */
 Router.prototype.back = function () {
     if (this.mode === 'history') {
         window.history.back();
+        return this;
     }
 
     return this.go(this._historyIdx - 1);
 };
 
+/**
+ * Go Forward in browser history
+ * Simulate "Forward" button
+ * 
+ * @returns {Router}
+ */
 Router.prototype.forward = function () {
     if (this.mode === 'history') {
         window.history.forward();
+        return this;
     }
 
     return this.go(this._historyIdx + 1);
 };
 
+/**
+ * Go to a specific history page
+ * 
+ * @param {number} count
+ * @returns {Router}
+ */
 Router.prototype.go = function (count) {
     if (this.mode === 'history') {
         window.history.go(count);
+        return this;
     }
 
     var page = this._historyStack[count];
