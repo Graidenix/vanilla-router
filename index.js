@@ -145,9 +145,10 @@ Router.prototype._parseRouteRule = function (route) {
     var uri = this._trimSlashes(route);
     var rule = uri
         .replace(/([\\\/\-\_\.])/g, "\\$1")
-        .replace(':word', '[a-zA-Z]+')
-        .replace(':num', '\d+')
-        .replace(':any', '[\\w\\-\\_\\.]+');
+        .replace(/\:word/g, '[a-zA-Z]+')
+        .replace(/\:num/g, '\d+')
+        .replace(/\{[a-zA-Z]+\}/, ':any')
+        .replace(/\:any/g, '[\\w\\-\\_\\.]+');
 
     return new RegExp('^' + rule + '$', 'i');
 };
