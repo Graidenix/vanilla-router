@@ -1,3 +1,6 @@
+## v1.0.0 / 2016-04-18
+- Added `dist` folder with min and dev version
+
 ## v0.1.5 / 2016-04-16
 - Added back function
 - Added forward function
