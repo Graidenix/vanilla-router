@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 0.1.5
+ * @version: 1.0.0
  * @author Graidenix
  *
  * @constructor
