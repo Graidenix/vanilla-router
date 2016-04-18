@@ -1,0 +1,26 @@
+{
+  "name": "vanilla-router",
+  "description": "JS vanilla Router",
+  "main": "./dist/vanilla-router.js",
+  "authors": [
+    "grigore@odajiu.eu"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "router",
+    "opa",
+    "webpack-router",
+    "browserify-router"
+  ],
+  "homepage": "https://github.com/Graidenix/vanilla-router",
+  "moduleType": [
+    "amd"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
