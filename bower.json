@@ -1,7 +1,7 @@
 {
   "name": "vanilla-router",
   "description": "JS vanilla Router",
-  "main": "./dist/vanilla-router.js",
+  "main": "index.js",
   "authors": [
     "grigore@odajiu.eu"
   ],
