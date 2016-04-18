@@ -1,3 +1,21 @@
+## v1.0.0 / 2016-04-18
+- Added `dist` folder with min and dev version
+
+## v0.1.5 / 2016-04-16
+- Added back function
+- Added forward function
+- Added go function
+
+## v0.1.4 / 2016-04-16
+- replaced listener interval with browser events
+
+## v0.1.3 / 2016-04-16
+- added name-placeholder as variable to pass to callback
+
+## v0.1.2 / 2016-04-16
+- Fixed multiple wildcards
+- Added name-placeholder as {placeholder}
+
 ## v0.1.1 / 2016-04-08
 - Added window state
 

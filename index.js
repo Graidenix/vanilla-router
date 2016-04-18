@@ -3,9 +3,9 @@
 /**
  * Router
  *
- * @version: 0.1.1
+ * @version: 1.0.0
  * @author Graidenix
- * 
+ *
  * @constructor
  *
  * @param {object} options
@@ -19,6 +19,12 @@ function Router(options) {
     this.mode = (!window.history || !window.history.pushState) ? 'hash' : settings.mode;
     this.root = settings.root === '/' ? '/' : '/' + this._trimSlashes(settings.root) + '/';
     this._pageState = null;
+
+    if (this.mode === 'hash') {
+        this._historyStack = [];
+        this._historyIdx = 0;
+        this._historyState = 'add'
+    }
 
     return this;
 }
@@ -145,10 +151,10 @@ Router.prototype._parseRouteRule = function (route) {
     var uri = this._trimSlashes(route);
     var rule = uri
         .replace(/([\\\/\-\_\.])/g, "\\$1")
+        .replace(/\{[a-zA-Z]+\}/g, '(:any)')
+        .replace(/\:any/g, '[\\w\\-\\_\\.]+')
         .replace(/\:word/g, '[a-zA-Z]+')
-        .replace(/\:num/g, '\d+')
-        .replace(/\{[a-zA-Z]+\}/, ':any')
-        .replace(/\:any/g, '[\\w\\-\\_\\.]+');
+        .replace(/\:num/g, '\d+');
 
     return new RegExp('^' + rule + '$', 'i');
 };
@@ -276,8 +282,25 @@ Router.prototype.reset = function () {
  * @returns {Router}
  */
 Router.prototype.check = function () {
-    var fragment = this._getFragment();
-    var self = this;
+    var self = this,
+        fragment = this._getFragment();
+
+    if (self.mode === "hash") {
+        if (self._historyState === 'add') {
+            if (this._historyIdx !== this._historyStack.length - 1) {
+                this._historyStack.splice(this._historyIdx + 1);
+            }
+
+            this._historyStack.push({
+                path: fragment,
+                state: self._pageState
+            });
+
+            this._historyIdx = this._historyStack.length - 1;
+        }
+        self._historyState = 'add';
+    }
+
     var found = this.routes.some(function (route) {
         var match = fragment.match(route.rule);
         if (match) {
@@ -285,7 +308,6 @@ Router.prototype.check = function () {
             var query = self._getQuery();
             var page = new Router.Page(fragment, query, match, self._pageState);
             route.handler.apply(page, match);
-            self._current = btoa(window.location.href);
             self._pageState = null;
             return true;
         }
@@ -307,14 +329,17 @@ Router.prototype.check = function () {
  */
 Router.prototype.addUriListener = function () {
     var self = this;
-    this._current = btoa(window.location.href);
 
-    window.clearInterval(this._interval);
-    this._interval = setInterval(function () {
-        if (self._current !== btoa(window.location.href)) {
+    if (self.mode === 'history') {
+        window.onpopstate = function () {
             self.check();
         }
-    }, 100);
+    } else {
+        window.onhashchange = function () {
+            self.check();
+        }
+    }
+
     return this;
 };
 
@@ -324,8 +349,8 @@ Router.prototype.addUriListener = function () {
  * @returns {Router}
  */
 Router.prototype.removeUriListener = function () {
-    window.clearInterval(this._interval);
-    this._current = null;
+    window.onpopstate = null;
+    window.onhashchange = null;
     return this;
 };
 
@@ -342,10 +367,63 @@ Router.prototype.navigateTo = function (path, state) {
     this._pageState = state || null;
     if (this.mode === 'history') {
         history.pushState(state, null, this.root + this._trimSlashes(path));
+        return this.check();
     } else {
         window.location.hash = path;
     }
-    return this.check();
+    return this;
+};
+
+/**
+ * Go Back in browser history
+ * Simulate "Back" button
+ * 
+ * @returns {Router}
+ */
+Router.prototype.back = function () {
+    if (this.mode === 'history') {
+        window.history.back();
+        return this;
+    }
+
+    return this.go(this._historyIdx - 1);
+};
+
+/**
+ * Go Forward in browser history
+ * Simulate "Forward" button
+ * 
+ * @returns {Router}
+ */
+Router.prototype.forward = function () {
+    if (this.mode === 'history') {
+        window.history.forward();
+        return this;
+    }
+
+    return this.go(this._historyIdx + 1);
+};
+
+/**
+ * Go to a specific history page
+ * 
+ * @param {number} count
+ * @returns {Router}
+ */
+Router.prototype.go = function (count) {
+    if (this.mode === 'history') {
+        window.history.go(count);
+        return this;
+    }
+
+    var page = this._historyStack[count];
+    if(!page) {
+        return this;
+    }
+
+    this._historyIdx = count;
+    this._historyState = 'hold';
+    return this.navigateTo(page.path, page.state);
 };
 
 if (typeof window !== "undefined") {
