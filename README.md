@@ -44,17 +44,23 @@ router.navigateTo('hello/World');
 
 ## Options
 
-#### mode `string`
+#### mode `string` 
 
+Default: "history" . 
 `hash` - is for hashbang routes based on `window.location.hash`
-
 `history` - is for clean url routes based on HTML5 functionality. It is also provide back-compatibility for old browser.
 
 #### root `string`
 
-#### page404 `function`
+Default: "/" .
+Root represents the relative path for the project root.
 
-#### routes `Array`   
+#### page404 `function`
+Default: {function} that log an error in console.
+
+#### routes `Array`
+Default: []
+_Warning!_ Use it only if you have all stack with RegExp routes.
 
 ## Methods
 Every public methods of Router return the instance of Router, so they can be chained.
@@ -71,6 +77,7 @@ string path can contain:
 
 ```js
 router.add('hello/world', function(){ });
+router.add('hello/:word', function(){ });
 router.add('hello/(:word)', function(name){ });
 router.add('hello/{name}', function(name){ });
 router.add(/^hello\/(\w+)/i, function(name){ });
