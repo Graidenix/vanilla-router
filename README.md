@@ -44,35 +44,35 @@ router.navigateTo('hello/World');
 
 ## Options
 
-### mode `string`
+#### mode `string`
 
-### root `string`
+#### root `string`
 
-### page404 `function`
+#### page404 `function`
 
-### routes `Array`   
+#### routes `Array`   
 
 ## Methods
 
-### add(path, handler)
+#### add(path, handler)
 
-### remove(path)
+#### remove(path)
 
-### navigateTo(path, [state])
+#### navigateTo(path, [state])
 
-### check()
+#### check()
 
-### back()
+#### back()
 
-### forward()
+#### forward()
 
-### go(step)
+#### go(step)
 
-### addUriListener()
+#### addUriListener()
 
-### removeUriListener()
+#### removeUriListener()
 
-### reset()
+#### reset()
 
 ## Licence
 Released under the MIT license
