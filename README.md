@@ -46,6 +46,10 @@ router.navigateTo('hello/World');
 
 #### mode `string`
 
+`hash` - is for hashbang routes based on `window.location.hash`
+
+`history` - is for clean url routes based on HTML5 functionality. It is also provide back-compatibility for old browser.
+
 #### root `string`
 
 #### page404 `function`
@@ -57,6 +61,7 @@ Every public methods of Router return the instance of Router, so they can be cha
 
 #### add(path, handler)
 `path` - string | RegExp
+
 `handler` - callback if the URL will match the path
 
 string path can contain:
