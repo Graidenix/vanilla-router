@@ -61,10 +61,11 @@ Root represents the relative path for the project root.
 #### page404 `function`
 
 Default: _function_ that log an error in console.
+
 Callback function for 404 page
 
 #### routes `Array`
-Default: []
+Default: [ ]
 
 _Warning!_ Use it only if you have all stack with RegExp routes.
 
@@ -72,9 +73,11 @@ _Warning!_ Use it only if you have all stack with RegExp routes.
 Every public methods of Router return the instance of Router, so they can be chained.
 
 #### add(path, handler)
-`path` - string | RegExp
+Add a route and handler for this route
 
-`handler` - callback if the URL will match the path
+###### Parameters
+- `path` - string | RegExp
+- `handler` - callback if the URL will match the path
 
 string path can contain:
  - parenthesis (`( )`) - value between them is sent to callback function  
@@ -90,23 +93,31 @@ router.add(/^hello\/(\w+)/i, function(name){ });
 ```
 
 #### remove(path)
+Remove the route from current list of routes by path
 
 #### navigateTo(path, [state])
+Navigate to the specific URI with optional additional state of page 
+
 
 #### check()
+Check the current URL for a change
 
 #### back()
+Simulate the browser "Back" button
 
 #### forward()
+Simulate the browser "Forward" button
 
 #### go(step)
+Go to a specific step in history
 
 #### addUriListener()
+Add the event listener for URL change 
 
 #### removeUriListener()
+Remove the event listener for URL change
 
 #### reset()
-
 Reset all setting and state of Router
 
 ## Licence
