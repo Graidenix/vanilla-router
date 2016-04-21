@@ -1,7 +1,10 @@
 # Changelog
 
+### v1.0.2
+- Added detailed API documentation
+
 ### v1.0.1
-To add detailed API documentation
+- Added to bower repo
 
 ### v1.0.0 / 2016-04-18
 - Added `dist` folder with min and dev version
