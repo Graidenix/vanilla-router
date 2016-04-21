@@ -53,8 +53,16 @@ router.navigateTo('hello/World');
 #### routes `Array`   
 
 ## Methods
+Every public methods of Router return the instance of Router, so they can be chained.
 
 #### add(path, handler)
+
+```js
+router.add('hello/world', function(){ });
+router.add('hello/(:word)', function(name){ });
+router.add('hello/{name}', function(name){ });
+router.add(/^hello\/(\w+)/i, function(name){ });
+```
 
 #### remove(path)
 
@@ -73,6 +81,8 @@ router.navigateTo('hello/World');
 #### removeUriListener()
 
 #### reset()
+
+Reset all setting and state of Router
 
 ## Licence
 Released under the MIT license
