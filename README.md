@@ -56,6 +56,13 @@ router.navigateTo('hello/World');
 Every public methods of Router return the instance of Router, so they can be chained.
 
 #### add(path, handler)
+`path` - string | RegExp
+`handler` - callback if the URL will match the path
+
+string path can contain:
+ - parenthesis (`( )`) - value between them is sent to callback function  
+ - wildcards (`:any`, `:num`, `:word`) it doesn't pass the value to callback function
+ - named placeholder (`{variableName}`) it pass the value to the callback function
 
 ```js
 router.add('hello/world', function(){ });
