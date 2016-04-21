@@ -2,6 +2,10 @@
 
 Simplest One Page Application Router for those who want to use it on Vanilla JS
 
+[![NPM](https://nodei.co/npm/vanilla-router.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vanilla-router/)
+
+[![NPM](https://nodei.co/npm-dl/vanilla-router.png?months=1&height=3)](https://nodei.co/npm/vanilla-router/)
+
 ## Installation
 
 ```bashp
