@@ -47,19 +47,25 @@ router.navigateTo('hello/World');
 #### mode `string` 
 
 Default: "history" . 
-`hash` - is for hashbang routes based on `window.location.hash`
-`history` - is for clean url routes based on HTML5 functionality. It is also provide back-compatibility for old browser.
+
+- `hash` - is for hashbang routes based on `window.location.hash`
+- `history` - is for clean url routes based on HTML5 functionality. It is also provide back-compatibility for old browser.
+
 
 #### root `string`
 
 Default: "/" .
+
 Root represents the relative path for the project root.
 
 #### page404 `function`
-Default: {function} that log an error in console.
+
+Default: _function_ that log an error in console.
+Callback function for 404 page
 
 #### routes `Array`
 Default: []
+
 _Warning!_ Use it only if you have all stack with RegExp routes.
 
 ## Methods
@@ -105,4 +111,5 @@ Reset all setting and state of Router
 
 ## Licence
 Released under the MIT license
-Copyright (c) 2016 Grigore Odajiu - 
+
+Copyright (c) 2016 Grigore Odajiu
