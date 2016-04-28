@@ -121,6 +121,6 @@ Remove the event listener for URL change
 Reset all setting and state of Router
 
 ## Licence
-Released under the MIT license
+Released under the [MIT](https://raw.githubusercontent.com/Graidenix/vanilla-router/master/LICENSE) license
 
 Copyright (c) 2016 Grigore Odajiu
