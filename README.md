@@ -11,8 +11,15 @@ Simplest One Page Application Router for those who want to use it on Vanilla JS
 
 ## Installation
 
+#### NPM
+
 ```bashp
 npm install vanilla-router --save
+```
+
+#### Bower
+```bashp
+bower install vanilla-router --save
 ```
 
 ## Usage 

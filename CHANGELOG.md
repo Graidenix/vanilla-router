@@ -1,12 +1,15 @@
 # Changelog
 
-### v1.0.3 
+### v1.0.4 / 2016-04-28
+- Added bower package install
+
+### v1.0.3 / 2016-04-28
 - Added LICENSE file
 
-### v1.0.2
+### v1.0.2 / 2016-04-21
 - Added detailed API documentation
 
-### v1.0.1
+### v1.0.1 / 2016-04-18
 - Added to bower repo
 
 ### v1.0.0 / 2016-04-18
