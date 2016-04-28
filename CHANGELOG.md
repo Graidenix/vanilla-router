@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.0.3 
+- Added LICENSE file
+
 ### v1.0.2
 - Added detailed API documentation
 
