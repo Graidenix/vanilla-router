@@ -122,5 +122,4 @@ Reset all setting and state of Router
 
 ## Licence
 Released under the MIT license
-
 Copyright (c) 2016 Grigore Odajiu
