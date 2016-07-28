@@ -12,6 +12,11 @@
     var router = new Router({
         mode: 'hash',
         root: '/index.html',
+        hooks:{
+            before: function(newPage) {
+                console.info('Before page loads hook', newPage);
+            }
+        },
         page404: function (path) {
             console.log('"/' + path + '" Page not found');
         }
@@ -32,7 +37,10 @@
             .add('about', function () {
                 console.log('About Page');
                 document.getElementById('title').innerHTML = 'About Page';
-            })
+            }, {unloadCb: function () {
+                console.log('This hook should be the synchronous request and should return true or false');
+                return false;
+            }})
             .remove('about')
             .check()
             .addUriListener()

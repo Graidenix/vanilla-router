@@ -1,6 +1,6 @@
 # TODO
 
-### v1.1.0
+### v1.2.0
 To add grunt task runner
 
 ### v2.0.0

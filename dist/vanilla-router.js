@@ -4,7 +4,7 @@
     /**
      * Router
      *
-     * @version: 1.0.4
+     * @version: 1.1.0
      * @author Graidenix
      *
      * @constructor
@@ -20,6 +20,9 @@
         this.mode = (!window.history || !window.history.pushState) ? 'hash' : settings.mode;
         this.root = settings.root === '/' ? '/' : '/' + this._trimSlashes(settings.root) + '/';
         this._pageState = null;
+        this.beforeHook = settings.hooks.before;
+        this._currentPage = null;
+        this._skipCheck = false;
 
         if (this.mode === 'hash') {
             this._historyStack = [];
@@ -37,14 +40,16 @@
      * @param {object} query
      * @param {Array} params
      * @param {object} state
+     * @param {object} options
      *
      * @constructor
      */
-    Router.Page = function (uri, query, params, state) {
+    Router.Page = function (uri, query, params, state, options) {
         this.uri = uri || '';
         this.query = query || {};
         this.params = params || [];
         this.state = state || null;
+        this.options = options || {};
     };
 
     /**
@@ -60,6 +65,10 @@
             routes: [],
             mode: 'history',
             root: '/',
+            hooks: {
+                "before": function () {
+                }
+            },
             page404: function (page) {
                 console.error({
                     page: page,
@@ -69,7 +78,7 @@
         };
 
         options = options || {};
-        ['routes', 'mode', 'root', 'page404'].forEach(function (key) {
+        ['routes', 'mode', 'root', 'page404', 'hooks'].forEach(function (key) {
             settings[key] = options[key] || defaults[key];
         });
 
@@ -230,12 +239,14 @@
      *
      * @param {string|RegExp} rule
      * @param {function} handler
+     * @param {{}} options
      * @returns {Router}
      */
-    Router.prototype.add = function (rule, handler) {
+    Router.prototype.add = function (rule, handler, options) {
         this.routes.push({
             rule: this._parseRouteRule(rule),
-            handler: handler
+            handler: handler,
+            options: options
         });
         return this;
     };
@@ -277,17 +288,12 @@
         return this;
     };
 
-    /**
-     * Check the URL and execute handler for its route
-     *
-     * @returns {Router}
-     */
-    Router.prototype.check = function () {
+    Router.prototype._pushHistory = function () {
         var self = this,
             fragment = this._getFragment();
 
-        if (self.mode === "hash") {
-            if (self._historyState === 'add') {
+        if (this.mode === "hash") {
+            if (this._historyState === 'add') {
                 if (this._historyIdx !== this._historyStack.length - 1) {
                     this._historyStack.splice(this._historyIdx + 1);
                 }
@@ -299,24 +305,68 @@
 
                 this._historyIdx = this._historyStack.length - 1;
             }
-            self._historyState = 'add';
+            this._historyState = 'add';
         }
+    };
+
+    Router.prototype._unloadCallback = function () {
+        if (this._currentPage && this._currentPage.options && this._currentPage.options.unloadCb) {
+            return this._currentPage.options.unloadCb(this._currentPage);
+        }
+        return true;
+    };
+
+    /**
+     * Check the URL and execute handler for its route
+     *
+     * @returns {Router}
+     */
+    Router.prototype.check = function () {
+        var self = this,
+            fragment = this._getFragment();
+
+        if (this._skipCheck) {
+            this._skipCheck = false;
+            return;
+        }
+
+        if (!this._unloadCallback()) {
+            this._skipCheck = true;
+            if (this.mode === 'history') {
+                window.history.back();
+            } else {
+                window.location.hash = this._current;
+            }
+            return this;
+        }
+
+        self._current = fragment;
+        this._pushHistory();
 
         var found = this.routes.some(function (route) {
             var match = fragment.match(route.rule);
             if (match) {
                 match.shift();
                 var query = self._getQuery();
-                var page = new Router.Page(fragment, query, match, self._pageState);
+                var page = new Router.Page(fragment, query, match, self._pageState, route.options);
+
+                self.beforeHook(page);
+                self._currentPage = page;
                 route.handler.apply(page, match);
                 self._pageState = null;
+
+                window.onbeforeunload = function() {
+                    if (!self._unloadCallback()) {
+                        return "text";
+                    }
+                };
+
                 return true;
             }
             return false;
         });
 
         if (!found) {
-            self._current = btoa(window.location.href);
             this._page404(fragment);
         }
 
@@ -333,11 +383,11 @@
 
         if (self.mode === 'history') {
             window.onpopstate = function () {
-                self.check();
+                return self.check();
             }
         } else {
             window.onhashchange = function () {
-                self.check();
+                return self.check();
             }
         }
 

@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.1.0 / 2016-07-28
+- Added hook for rooter before page loads 
+- Added hook for page before it unloads
+
 ### v1.0.4 / 2016-04-28
 - Added bower package install
 
