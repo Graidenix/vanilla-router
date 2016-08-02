@@ -4,7 +4,7 @@
     /**
      * Router
      *
-     * @version: 1.1.0
+     * @version: 1.1.1
      * @author Graidenix
      *
      * @constructor
@@ -410,12 +410,14 @@
      *
      * @param {string} path
      * @param {object} state
+     * @param {boolean} silent
      *
      * @returns {Router}
      */
-    Router.prototype.navigateTo = function (path, state) {
+    Router.prototype.navigateTo = function (path, state, silent) {
         path = this._trimSlashes(path) || '';
         this._pageState = state || null;
+        this._skipCheck = !!silent;
         if (this.mode === 'history') {
             history.pushState(state, null, this.root + this._trimSlashes(path));
             return this.check();

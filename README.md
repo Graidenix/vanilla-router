@@ -79,12 +79,13 @@ _Warning!_ Use it only if you have all stack with RegExp routes.
 ## Methods
 Every public methods of Router return the instance of Router, so they can be chained.
 
-#### add(path, handler)
+#### add(path, handler, options)
 Add a route and handler for this route
 
 ###### Parameters
 - `path` - string | RegExp
 - `handler` - callback if the URL will match the path
+- `options` - object, you can specify before unload callback
 
 string path can contain:
  - parenthesis (`( )`) - value between them is sent to callback function  
@@ -102,9 +103,9 @@ router.add(/^hello\/(\w+)/i, function(name){ });
 #### remove(path)
 Remove the route from current list of routes by path
 
-#### navigateTo(path, [state])
+#### navigateTo(path[, state[, silent]])
 Navigate to the specific URI with optional additional state of page 
-
+silent is a flag, set as true, to skip check for new URL
 
 #### check()
 Check the current URL for a change
