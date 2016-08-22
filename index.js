@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 1.1.2
+ * @version: 1.1.3
  * @author Graidenix
  *
  * @constructor
@@ -65,7 +65,7 @@ Router.prototype._getSettings = function (options) {
         mode: 'history',
         root: '/',
         hooks: {
-            "before": function () {
+            'before': function () {
             }
         },
         page404: function (page) {
@@ -154,12 +154,12 @@ Router.prototype._page404 = function (path) {
  * @private
  */
 Router.prototype._parseRouteRule = function (route) {
-    if (typeof route !== "string") {
+    if (typeof route !== 'string') {
         return route;
     }
     var uri = this._trimSlashes(route);
     var rule = uri
-        .replace(/([\\\/\-\_\.])/g, "\\$1")
+        .replace(/([\\\/\-\_\.])/g, '\\$1')
         .replace(/\{[a-zA-Z]+\}/g, '(:any)')
         .replace(/\:any/g, '[\\w\\-\\_\\.]+')
         .replace(/\:word/g, '[a-zA-Z]+')
@@ -176,7 +176,6 @@ Router.prototype._parseRouteRule = function (route) {
  * @private
  */
 Router.prototype._parseQuery = function (query) {
-    this._queryString = query;
     var _query = {};
     if (typeof query !== 'string') {
         return _query;
@@ -186,6 +185,7 @@ Router.prototype._parseQuery = function (query) {
         query = query.substr(1);
     }
 
+    this._queryString = query;
     query.split('&').forEach(function (row) {
         var parts = row.split('=');
         if (parts[0] !== '') {
@@ -216,7 +216,7 @@ Router.prototype._getHistoryQuery = function () {
  */
 Router.prototype._getHashQuery = function () {
     var index = window.location.hash.indexOf('?');
-    var query = (index !== -1) ? window.location.hash.substr(index) : "";
+    var query = (index !== -1) ? window.location.hash.substr(index) : '';
     return this._parseQuery(query);
 };
 
@@ -292,7 +292,7 @@ Router.prototype._pushHistory = function () {
     var self = this,
         fragment = this._getFragment();
 
-    if (this.mode === "hash") {
+    if (this.mode === 'hash') {
         if (this._historyState === 'add') {
             if (this._historyIdx !== this._historyStack.length - 1) {
                 this._historyStack.splice(this._historyIdx + 1);
@@ -356,7 +356,7 @@ Router.prototype.check = function () {
 
             window.onbeforeunload = function() {
                 if (!self._unloadCallback()) {
-                    return "text";
+                    return 'text';
                 }
             };
 
@@ -437,7 +437,7 @@ Router.prototype.refresh = function () {
 
 /**
  * Go Back in browser history
- * Simulate "Back" button
+ * Simulate 'Back' button
  *
  * @returns {Router}
  */
@@ -452,7 +452,7 @@ Router.prototype.back = function () {
 
 /**
  * Go Forward in browser history
- * Simulate "Forward" button
+ * Simulate 'Forward' button
  *
  * @returns {Router}
  */
@@ -487,10 +487,10 @@ Router.prototype.go = function (count) {
     return this.navigateTo(page.path, page.state);
 };
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
     window.Router = Router;
 }
 
-if (typeof module !== "undefined") {
+if (typeof module !== 'undefined') {
     module.exports = Router;
 }
