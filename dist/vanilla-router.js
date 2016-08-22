@@ -4,7 +4,7 @@
     /**
      * Router
      *
-     * @version: 1.1.0
+     * @version: 1.1.2
      * @author Graidenix
      *
      * @constructor
@@ -177,6 +177,7 @@
      * @private
      */
     Router.prototype._parseQuery = function (query) {
+        this._queryString = query;
         var _query = {};
         if (typeof query !== 'string') {
             return _query;
@@ -325,11 +326,6 @@
         var self = this,
             fragment = this._getFragment();
 
-        if (this._skipCheck) {
-            this._skipCheck = false;
-            return;
-        }
-
         if (!this._unloadCallback()) {
             this._skipCheck = true;
             if (this.mode === 'history') {
@@ -350,8 +346,12 @@
                 var query = self._getQuery();
                 var page = new Router.Page(fragment, query, match, self._pageState, route.options);
 
-                self.beforeHook(page);
                 self._currentPage = page;
+                if (self._skipCheck) {
+                    self._skipCheck = false;
+                    return true;
+                }
+                self.beforeHook(page);
                 route.handler.apply(page, match);
                 self._pageState = null;
 
@@ -410,12 +410,14 @@
      *
      * @param {string} path
      * @param {object} state
+     * @param {boolean} silent
      *
      * @returns {Router}
      */
-    Router.prototype.navigateTo = function (path, state) {
+    Router.prototype.navigateTo = function (path, state, silent) {
         path = this._trimSlashes(path) || '';
         this._pageState = state || null;
+        this._skipCheck = !!silent;
         if (this.mode === 'history') {
             history.pushState(state, null, this.root + this._trimSlashes(path));
             return this.check();
@@ -423,6 +425,15 @@
             window.location.hash = path;
         }
         return this;
+    };
+
+    /**
+     * Refresh page with recall route handler
+     * @returns {Router}
+     */
+    Router.prototype.refresh = function () {
+        var path = this._currentPage.uri + '?' + this._queryString;
+        return this.navigateTo(path, this._currentPage.state);
     };
 
     /**

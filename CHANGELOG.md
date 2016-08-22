@@ -1,5 +1,12 @@
 # Changelog
 
+### v1.1.2 / 2016-08-22
+- Fixed the silent navigate currentPage object
+- Added refresh method
+
+### v1.1.1 / 2016-08-02
+- Added silent navigation
+
 ### v1.1.0 / 2016-07-28
 - Added hook for rooter before page loads 
 - Added hook for page before it unloads

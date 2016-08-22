@@ -118,6 +118,9 @@ Simulate the browser "Forward" button
 #### go(step)
 Go to a specific step in history
 
+#### refresh()
+Recall current route handler with same arguments
+
 #### addUriListener()
 Add the event listener for URL change 
 

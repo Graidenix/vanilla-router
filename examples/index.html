@@ -44,7 +44,10 @@
             .remove('about')
             .check()
             .addUriListener()
-            .navigateTo('hello/World', {foo: "bar"});
+            .navigateTo('hello/World', {foo: "bar"})
+            .refresh();
+
+    window.router = router;
 </script>
 </body>
 </html>
