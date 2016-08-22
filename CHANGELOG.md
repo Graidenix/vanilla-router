@@ -1,5 +1,14 @@
 # Changelog
 
+### v1.1.2 / 2016-08-22
+- Fixed the silent navigate currentPage object
+- Added refresh method
+### v1.1.3 / 2016-08-22
+- Fix query string for refresh
+
+### v1.1.2 / 2016-08-22
+- Added recall of router handler functionality
+
 ### v1.1.1 / 2016-08-02
 - Added silent navigation
 
