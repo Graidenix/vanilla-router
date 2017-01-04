@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.1.4 / 2017-01-04
+- Fixed the `:num` wildcard
+- Added async unload callback
+
 ### v1.1.2 / 2016-08-22
 - Fixed the silent navigate currentPage object
 - Added refresh method

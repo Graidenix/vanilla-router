@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 1.1.3
+ * @version: 1.1.4
  * @author Graidenix
  *
  * @constructor
@@ -163,7 +163,7 @@ Router.prototype._parseRouteRule = function (route) {
         .replace(/\{[a-zA-Z]+\}/g, '(:any)')
         .replace(/\:any/g, '[\\w\\-\\_\\.]+')
         .replace(/\:word/g, '[a-zA-Z]+')
-        .replace(/\:num/g, '\d+');
+        .replace(/\:num/g, '\\d+');
 
     return new RegExp('^' + rule + '$', 'i');
 };
@@ -309,36 +309,30 @@ Router.prototype._pushHistory = function () {
     }
 };
 
-Router.prototype._unloadCallback = function () {
+/**
+ *
+ * @param asyncRequest boolean
+ * @returns {PromiseResult<boolean> | boolean}
+ * @private
+ */
+Router.prototype._unloadCallback = function (asyncRequest) {
+    var result;
     if (this._currentPage && this._currentPage.options && this._currentPage.options.unloadCb) {
-        return this._currentPage.options.unloadCb(this._currentPage);
+        result = this._currentPage.options.unloadCb(this._currentPage, asyncRequest);
+        if (!asyncRequest || result instanceof Promise) {
+            return result;
+        }
+        return result ? Promise.resolve(result) : Promise.reject(result);
+    } else {
+        return asyncRequest ? Promise.resolve(true) : true;
     }
-    return true;
 };
 
-/**
- * Check the URL and execute handler for its route
- *
- * @returns {Router}
- */
-Router.prototype.check = function () {
+
+Router.prototype._findRoute = function () {
     var self = this,
         fragment = this._getFragment();
-
-    if (!this._unloadCallback()) {
-        this._skipCheck = true;
-        if (this.mode === 'history') {
-            window.history.back();
-        } else {
-            window.location.hash = this._current;
-        }
-        return this;
-    }
-
-    self._current = fragment;
-    this._pushHistory();
-
-    var found = this.routes.some(function (route) {
+    return this.routes.some(function (route) {
         var match = fragment.match(route.rule);
         if (match) {
             match.shift();
@@ -354,20 +348,46 @@ Router.prototype.check = function () {
             route.handler.apply(page, match);
             self._pageState = null;
 
-            window.onbeforeunload = function() {
-                if (!self._unloadCallback()) {
-                    return 'text';
-                }
+            window.onbeforeunload = function (ev) {
+                ev.returnValue = !self._unloadCallback(false);
+                return ev.returnValue;
             };
 
             return true;
         }
         return false;
     });
+};
 
-    if (!found) {
-        this._page404(fragment);
-    }
+/**
+ * Check the URL and execute handler for its route
+ *
+ * @returns {Router}
+ */
+Router.prototype.check = function () {
+    var self = this,
+        fragment = this._getFragment();
+
+    this._unloadCallback(true)
+        .then(function (result) {
+            var found;
+
+            self._current = fragment;
+            self._pushHistory();
+
+            found = self._findRoute.call(self);
+            if (!found) {
+                self._page404(fragment);
+            }
+        })
+        .catch(function () {
+            self._skipCheck = true;
+            if (self.mode === 'history') {
+                window.history.back();
+            } else {
+                window.location.hash = self._current;
+            }
+        });
 
     return this;
 };
@@ -431,6 +451,9 @@ Router.prototype.navigateTo = function (path, state, silent) {
  * @returns {Router}
  */
 Router.prototype.refresh = function () {
+    if(!this._currentPage) {
+        return this;
+    }
     var path = this._currentPage.uri + '?' + this._queryString;
     return this.navigateTo(path, this._currentPage.state);
 };

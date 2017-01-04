@@ -12,8 +12,8 @@
     var router = new Router({
         mode: 'hash',
         root: '/index.html',
-        hooks:{
-            before: function(newPage) {
+        hooks: {
+            before: function (newPage) {
                 console.info('Before page loads hook', newPage);
             }
         },
@@ -22,13 +22,25 @@
         }
     });
 
-    router.add('', function () {
+    router
+            .add('', function () {
                 console.log('Home page');
                 document.getElementById('title').innerHTML = "Home Page";
             })
             .add('search', function () {
                 console.log('Search Page');
                 document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
+            }, {
+                unloadCb: function (page, async) {
+                    console.log('This hook should be the synchronous request and should return true or false');
+                    if (async) {
+                        return Promise.reject(false);
+                    }
+                    return false;
+                }
+            })
+            .add('(:num)-(:num)-(:num)/report', function(year, month, day) {
+                console.log(year, month, day);
             })
             .add('hello/(:any)', function (name) {
                 console.log('Hello, ' + name, this.state);
@@ -37,10 +49,7 @@
             .add('about', function () {
                 console.log('About Page');
                 document.getElementById('title').innerHTML = 'About Page';
-            }, {unloadCb: function () {
-                console.log('This hook should be the synchronous request and should return true or false');
-                return false;
-            }})
+            })
             .remove('about')
             .check()
             .addUriListener()
