@@ -1,5 +1,10 @@
 # Changelog
 
+### v1.2.0 / 2017-01-13
+- Added Async unload callback
+- Fixed the reset state for unload false
+- Remove IE compatibility
+
 ### v1.1.5 / 2017-01-13
 - Remove the unload callback
 - Fixed Promise error for IE
