@@ -1,5 +1,10 @@
 # Changelog
 
+### v1.1.5 / 2017-01-13
+- Remove the unload callback
+- Fixed Promise error for IE
+- Fixed always popup confirm box on leave page
+
 ### v1.1.4 / 2017-01-04
 - Fixed the `:num` wildcard
 - Added async unload callback
