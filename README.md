@@ -8,6 +8,7 @@
 
 Simplest One Page Application Router for those who want to use it on Vanilla JS
 
+**Note**: 
 If you want to use the IE compatible version use `v1.1.5`
 
 ## Installation

@@ -30,9 +30,14 @@
             .add('search', function () {
                 console.log('Search Page');
                 document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
-            })
-            .add('(:num)-(:num)-(:num)/report', function(year, month, day) {
-                console.log(year, month, day);
+            }, {
+                unloadCb: function (async) {
+                    if (async){
+                        console.warn("You have unsaved data!");
+                        return confirm("You have unsaved data! Continue?");
+                    }
+                    return false;
+                }
             })
             .add('hello/(:any)', function (name) {
                 console.log('Hello, ' + name, this.state);
