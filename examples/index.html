@@ -30,14 +30,6 @@
             .add('search', function () {
                 console.log('Search Page');
                 document.getElementById('title').innerHTML = 'Search for: ' + this.query.q;
-            }, {
-                unloadCb: function (page, async) {
-                    console.log('This hook should be the synchronous request and should return true or false');
-                    if (async) {
-                        return Promise.reject(false);
-                    }
-                    return false;
-                }
             })
             .add('(:num)-(:num)-(:num)/report', function(year, month, day) {
                 console.log(year, month, day);

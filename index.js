@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 1.1.4
+ * @version: 1.1.5
  * @author Graidenix
  *
  * @constructor
@@ -16,17 +16,17 @@ function Router(options) {
 
     this.routes = settings.routes;
     this.notFoundHandler = settings.page404;
-    this.mode = (!window.history || !window.history.pushState) ? 'hash' : settings.mode;
-    this.root = settings.root === '/' ? '/' : '/' + this._trimSlashes(settings.root) + '/';
+    this.mode = (!window.history || !window.history.pushState) ? "hash" : settings.mode;
+    this.root = settings.root === "/" ? "/" : "/" + this._trimSlashes(settings.root) + "/";
     this._pageState = null;
     this.beforeHook = settings.hooks.before;
     this._currentPage = null;
     this._skipCheck = false;
 
-    if (this.mode === 'hash') {
+    if (this.mode === "hash") {
         this._historyStack = [];
         this._historyIdx = 0;
-        this._historyState = 'add'
+        this._historyState = "add"
     }
 
     return this;
@@ -44,7 +44,7 @@ function Router(options) {
  * @constructor
  */
 Router.Page = function (uri, query, params, state, options) {
-    this.uri = uri || '';
+    this.uri = uri || "";
     this.query = query || {};
     this.params = params || [];
     this.state = state || null;
@@ -62,22 +62,22 @@ Router.prototype._getSettings = function (options) {
     var settings = {};
     var defaults = {
         routes: [],
-        mode: 'history',
-        root: '/',
+        mode: "history",
+        root: "/",
         hooks: {
-            'before': function () {
+            "before": function () {
             }
         },
         page404: function (page) {
             console.error({
                 page: page,
-                message: '404. Page not found'
+                message: "404. Page not found"
             });
         }
     };
 
     options = options || {};
-    ['routes', 'mode', 'root', 'page404', 'hooks'].forEach(function (key) {
+    ["routes", "mode", "root", "page404", "hooks"].forEach(function (key) {
         settings[key] = options[key] || defaults[key];
     });
 
@@ -85,27 +85,27 @@ Router.prototype._getSettings = function (options) {
 };
 
 /**
- * Get URI for Router 'history' mode
+ * Get URI for Router "history" mode
  *
  * @private
  * @returns {string}
  */
 Router.prototype._getHistoryFragment = function () {
     var fragment = decodeURI(window.location.pathname);
-    if (this.root !== '/') {
-        fragment = fragment.replace(this.root, '');
+    if (this.root !== "/") {
+        fragment = fragment.replace(this.root, "");
     }
     return this._trimSlashes(fragment);
 };
 
 /**
- * Get URI for router 'hash' mode
+ * Get URI for router "hash" mode
  *
  * @private
  * @returns {string}
  */
 Router.prototype._getHashFragment = function () {
-    var hash = window.location.hash.substr(1).replace(/(\?.*)$/, '');
+    var hash = window.location.hash.substr(1).replace(/(\?.*)$/, "");
     return this._trimSlashes(hash);
 };
 
@@ -116,7 +116,7 @@ Router.prototype._getHashFragment = function () {
  * @returns {string}
  */
 Router.prototype._getFragment = function () {
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         return this._getHistoryFragment();
     } else {
         return this._getHashFragment();
@@ -131,10 +131,10 @@ Router.prototype._getFragment = function () {
  * @returns {string}
  */
 Router.prototype._trimSlashes = function (path) {
-    if (typeof path !== 'string') {
-        return '';
+    if (typeof path !== "string") {
+        return "";
     }
-    return path.toString().replace(/\/$/, '').replace(/^\//, '');
+    return path.toString().replace(/\/$/, "").replace(/^\//, "");
 };
 
 /**
@@ -154,18 +154,18 @@ Router.prototype._page404 = function (path) {
  * @private
  */
 Router.prototype._parseRouteRule = function (route) {
-    if (typeof route !== 'string') {
+    if (typeof route !== "string") {
         return route;
     }
     var uri = this._trimSlashes(route);
     var rule = uri
-        .replace(/([\\\/\-\_\.])/g, '\\$1')
-        .replace(/\{[a-zA-Z]+\}/g, '(:any)')
-        .replace(/\:any/g, '[\\w\\-\\_\\.]+')
-        .replace(/\:word/g, '[a-zA-Z]+')
-        .replace(/\:num/g, '\\d+');
+        .replace(/([\\\/\-\_\.])/g, "\\$1")
+        .replace(/\{[a-zA-Z]+\}/g, "(:any)")
+        .replace(/\:any/g, "[\\w\\-\\_\\.]+")
+        .replace(/\:word/g, "[a-zA-Z]+")
+        .replace(/\:num/g, "\\d+");
 
-    return new RegExp('^' + rule + '$', 'i');
+    return new RegExp("^" + rule + "$", "i");
 };
 
 /**
@@ -177,18 +177,18 @@ Router.prototype._parseRouteRule = function (route) {
  */
 Router.prototype._parseQuery = function (query) {
     var _query = {};
-    if (typeof query !== 'string') {
+    if (typeof query !== "string") {
         return _query;
     }
 
-    if (query[0] === '?') {
+    if (query[0] === "?") {
         query = query.substr(1);
     }
 
     this._queryString = query;
-    query.split('&').forEach(function (row) {
-        var parts = row.split('=');
-        if (parts[0] !== '') {
+    query.split("&").forEach(function (row) {
+        var parts = row.split("=");
+        if (parts[0] !== "") {
             if (parts[1] === undefined) {
                 parts[1] = true;
             }
@@ -215,8 +215,8 @@ Router.prototype._getHistoryQuery = function () {
  * @private
  */
 Router.prototype._getHashQuery = function () {
-    var index = window.location.hash.indexOf('?');
-    var query = (index !== -1) ? window.location.hash.substr(index) : '';
+    var index = window.location.hash.indexOf("?");
+    var query = (index !== -1) ? window.location.hash.substr(index) : "";
     return this._parseQuery(query);
 };
 
@@ -227,7 +227,7 @@ Router.prototype._getHashQuery = function () {
  * @returns {Object}
  */
 Router.prototype._getQuery = function () {
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         return this._getHistoryQuery();
     } else {
         return this._getHashQuery();
@@ -259,7 +259,7 @@ Router.prototype.add = function (rule, handler, options) {
  */
 Router.prototype.remove = function (param) {
     var self = this;
-    if (typeof param === 'string') {
+    if (typeof param === "string") {
         param = this._parseRouteRule(param).toString();
     }
     this.routes.some(function (route, i) {
@@ -281,7 +281,7 @@ Router.prototype.remove = function (param) {
 Router.prototype.reset = function () {
     this.routes = [];
     this.mode = null;
-    this.root = '/';
+    this.root = "/";
     this._pageState = {};
     this.removeUriListener();
 
@@ -292,8 +292,8 @@ Router.prototype._pushHistory = function () {
     var self = this,
         fragment = this._getFragment();
 
-    if (this.mode === 'hash') {
-        if (this._historyState === 'add') {
+    if (this.mode === "hash") {
+        if (this._historyState === "add") {
             if (this._historyIdx !== this._historyStack.length - 1) {
                 this._historyStack.splice(this._historyIdx + 1);
             }
@@ -305,34 +305,21 @@ Router.prototype._pushHistory = function () {
 
             this._historyIdx = this._historyStack.length - 1;
         }
-        this._historyState = 'add';
+        this._historyState = "add";
     }
 };
 
 /**
+ * Check the URL and execute handler for its route
  *
- * @param asyncRequest boolean
- * @returns {PromiseResult<boolean> | boolean}
- * @private
+ * @returns {Router}
  */
-Router.prototype._unloadCallback = function (asyncRequest) {
-    var result;
-    if (this._currentPage && this._currentPage.options && this._currentPage.options.unloadCb) {
-        result = this._currentPage.options.unloadCb(this._currentPage, asyncRequest);
-        if (!asyncRequest || result instanceof Promise) {
-            return result;
-        }
-        return result ? Promise.resolve(result) : Promise.reject(result);
-    } else {
-        return asyncRequest ? Promise.resolve(true) : true;
-    }
-};
-
-
-Router.prototype._findRoute = function () {
+Router.prototype.check = function () {
     var self = this,
         fragment = this._getFragment();
-    return this.routes.some(function (route) {
+
+    this._pushHistory();
+    var found = this.routes.some(function (route) {
         var match = fragment.match(route.rule);
         if (match) {
             match.shift();
@@ -348,46 +335,14 @@ Router.prototype._findRoute = function () {
             route.handler.apply(page, match);
             self._pageState = null;
 
-            window.onbeforeunload = function (ev) {
-                ev.returnValue = !self._unloadCallback(false);
-                return ev.returnValue;
-            };
-
             return true;
         }
         return false;
     });
-};
 
-/**
- * Check the URL and execute handler for its route
- *
- * @returns {Router}
- */
-Router.prototype.check = function () {
-    var self = this,
-        fragment = this._getFragment();
-
-    this._unloadCallback(true)
-        .then(function (result) {
-            var found;
-
-            self._current = fragment;
-            self._pushHistory();
-
-            found = self._findRoute.call(self);
-            if (!found) {
-                self._page404(fragment);
-            }
-        })
-        .catch(function () {
-            self._skipCheck = true;
-            if (self.mode === 'history') {
-                window.history.back();
-            } else {
-                window.location.hash = self._current;
-            }
-        });
+    if (!found) {
+        this._page404(fragment);
+    }
 
     return this;
 };
@@ -400,7 +355,7 @@ Router.prototype.check = function () {
 Router.prototype.addUriListener = function () {
     var self = this;
 
-    if (self.mode === 'history') {
+    if (self.mode === "history") {
         window.onpopstate = function () {
             return self.check();
         }
@@ -434,10 +389,10 @@ Router.prototype.removeUriListener = function () {
  * @returns {Router}
  */
 Router.prototype.navigateTo = function (path, state, silent) {
-    path = this._trimSlashes(path) || '';
+    path = this._trimSlashes(path) || "";
     this._pageState = state || null;
     this._skipCheck = !!silent;
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         history.pushState(state, null, this.root + this._trimSlashes(path));
         return this.check();
     } else {
@@ -451,21 +406,18 @@ Router.prototype.navigateTo = function (path, state, silent) {
  * @returns {Router}
  */
 Router.prototype.refresh = function () {
-    if(!this._currentPage) {
-        return this;
-    }
-    var path = this._currentPage.uri + '?' + this._queryString;
+    var path = this._currentPage.uri + "?" + this._queryString;
     return this.navigateTo(path, this._currentPage.state);
 };
 
 /**
  * Go Back in browser history
- * Simulate 'Back' button
+ * Simulate "Back" button
  *
  * @returns {Router}
  */
 Router.prototype.back = function () {
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         window.history.back();
         return this;
     }
@@ -475,12 +427,12 @@ Router.prototype.back = function () {
 
 /**
  * Go Forward in browser history
- * Simulate 'Forward' button
+ * Simulate "Forward" button
  *
  * @returns {Router}
  */
 Router.prototype.forward = function () {
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         window.history.forward();
         return this;
     }
@@ -495,7 +447,7 @@ Router.prototype.forward = function () {
  * @returns {Router}
  */
 Router.prototype.go = function (count) {
-    if (this.mode === 'history') {
+    if (this.mode === "history") {
         window.history.go(count);
         return this;
     }
@@ -506,14 +458,14 @@ Router.prototype.go = function (count) {
     }
 
     this._historyIdx = count;
-    this._historyState = 'hold';
+    this._historyState = "hold";
     return this.navigateTo(page.path, page.state);
 };
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     window.Router = Router;
 }
 
-if (typeof module !== 'undefined') {
+if (typeof module !== "undefined") {
     module.exports = Router;
 }
