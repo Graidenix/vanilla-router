@@ -1,5 +1,11 @@
 # Changelog
 
+### v1.2.2 / 2017-01-21
+- Fixed issue related to sync and async processes
+
+### v1.2.1 / 2017-01-13
+- Minor fix
+
 ### v1.2.0 / 2017-01-13
 - Added Async unload callback
 - Fixed the reset state for unload false

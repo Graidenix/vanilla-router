@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 1.2.0
+ * @version: 1.2.2
  * @author Graidenix
  *
  * @constructor
@@ -291,6 +291,10 @@ Router.prototype.reset = function () {
     return this;
 };
 
+/**
+ * Add current page in history stack
+ * @private
+ */
 Router.prototype._pushHistory = function () {
     var _this = this,
         fragment = this._getFragment();
@@ -320,6 +324,11 @@ Router.prototype._pushHistory = function () {
  */
 Router.prototype._unloadCallback = function (asyncRequest) {
     var result;
+
+    if (this._skipCheck) {
+        return asyncRequest ? Promise.resolve(true) : true;
+    }
+
     if (this._currentPage && this._currentPage.options && this._currentPage.options.unloadCb) {
         result = this._currentPage.options.unloadCb(this._currentPage, asyncRequest);
         if (!asyncRequest || result instanceof Promise) {
@@ -331,10 +340,16 @@ Router.prototype._unloadCallback = function (asyncRequest) {
     }
 };
 
-
+/**
+ * Check if router has the action for current path
+ *
+ * @returns {boolean}
+ * @private
+ */
 Router.prototype._findRoute = function () {
     var _this = this,
         fragment = this._getFragment();
+
     return this.routes.some(function (route) {
         var match = fragment.match(route.rule);
         if (match) {
@@ -352,8 +367,8 @@ Router.prototype._findRoute = function () {
             _this._pageState = null;
 
             window.onbeforeunload = function (ev) {
-                if(_this._unloadCallback(false)) {
-                   return;
+                if (_this._unloadCallback(false)) {
+                    return;
                 }
                 ev.returnValue = true;
                 return true;
@@ -365,9 +380,45 @@ Router.prototype._findRoute = function () {
     });
 };
 
-Router.prototype._resetState = function() {
+/**
+ *
+ */
+Router.prototype._treatAsync = function () {
+    var result;
+
+    result = this._currentPage.options.unloadCb(this._currentPage, true);
+    if (!(result instanceof Promise)) {
+        result = result ? Promise.resolve(result) : Promise.reject(result);
+    }
+
+    result
+        .then(this._processUri.bind(this))
+        .catch(this._resetState.bind(this));
+};
+
+/**
+ *
+ * @private
+ */
+Router.prototype._resetState = function () {
     this._skipCheck = true;
     this.navigateTo(this._current, this._currentPage.state, true);
+};
+
+/**
+ * Replace current page with new one
+ */
+Router.prototype._processUri = function () {
+    var fragment = this._getFragment(),
+        found;
+
+    this._current = fragment;
+    this._pushHistory();
+
+    found = this._findRoute.call(this);
+    if (!found) {
+        this._page404(fragment);
+    }
 };
 
 /**
@@ -376,25 +427,14 @@ Router.prototype._resetState = function() {
  * @returns {Router}
  */
 Router.prototype.check = function () {
-    var _this = this,
-        fragment = this._getFragment();
+    if (this._skipCheck) return this;
 
-    this._unloadCallback(true)
-        .then(function () {
-            var found;
-
-            _this._current = fragment;
-            _this._pushHistory();
-
-            found = _this._findRoute.call(_this);
-            if (!found) {
-                _this._page404(fragment);
-            }
-        })
-        .catch(function() {
-            _this._resetState();
-        });
-
+    // if page has unload cb treat as promise
+    if (this._currentPage && this._currentPage.options && this._currentPage.options.unloadCb) {
+        this._treatAsync();
+    } else {
+        this._processUri();
+    }
     return this;
 };
 
@@ -404,16 +444,10 @@ Router.prototype.check = function () {
  * @returns {Router}
  */
 Router.prototype.addUriListener = function () {
-    var _this = this;
-
-    if (_this.mode === "history") {
-        window.onpopstate = function () {
-            return _this.check();
-        }
+    if (this.mode === "history") {
+        window.onpopstate = this.check.bind(this);
     } else {
-        window.onhashchange = function () {
-            return _this.check();
-        }
+        window.onhashchange = this.check.bind(this);
     }
 
     return this;
@@ -443,7 +477,6 @@ Router.prototype.navigateTo = function (path, state, silent) {
     path = this._trimSlashes(path) || "";
     this._pageState = state || null;
     this._skipCheck = !!silent;
-    this._action = "navigate";
 
     if (this.mode === "history") {
         history.pushState(state, null, this.root + this._trimSlashes(path));
@@ -459,8 +492,7 @@ Router.prototype.navigateTo = function (path, state, silent) {
  * @returns {Router}
  */
 Router.prototype.refresh = function () {
-    this._action = "refresh";
-    if(!this._currentPage) {
+    if (!this._currentPage) {
         return this;
     }
     var path = this._currentPage.uri + "?" + this._queryString;
@@ -474,7 +506,6 @@ Router.prototype.refresh = function () {
  * @returns {Router}
  */
 Router.prototype.back = function () {
-    this._action = "back";
     if (this.mode === "history") {
         window.history.back();
         return this;
@@ -490,7 +521,6 @@ Router.prototype.back = function () {
  * @returns {Router}
  */
 Router.prototype.forward = function () {
-    this._action = "forward";
     if (this.mode === "history") {
         window.history.forward();
         return this;
@@ -506,7 +536,6 @@ Router.prototype.forward = function () {
  * @returns {Router}
  */
 Router.prototype.go = function (count) {
-    this._action = "go";
     if (this.mode === "history") {
         window.history.go(count);
         return this;
