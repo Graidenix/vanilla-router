@@ -5,7 +5,7 @@
     /**
      * Router
      *
-     * @version: 1.2.2
+     * @version: 1.2.3
      * @author Graidenix
      *
      * @constructor
@@ -21,6 +21,7 @@
         this.mode = (!window.history || !window.history.pushState) ? "hash" : settings.mode;
         this.root = settings.root === "/" ? "/" : "/" + this._trimSlashes(settings.root) + "/";
         this.beforeHook = settings.hooks.before;
+        this.securityHook = settings.hooks.secure;
 
         this._pageState = null;
         this._currentPage = null;
@@ -70,6 +71,9 @@
             root: "/",
             hooks: {
                 "before": function () {
+                },
+                "secure": function () {
+                    return true;
                 }
             },
             page404: function (page) {
@@ -358,6 +362,10 @@
                 match.shift();
                 var query = _this._getQuery();
                 var page = new Router.Page(fragment, query, match, _this._pageState, route.options);
+
+                if (!_this.securityHook(page)) {
+                    return false;
+                }
 
                 _this._currentPage = page;
                 if (_this._skipCheck) {
