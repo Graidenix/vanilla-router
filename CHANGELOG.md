@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.2.3 / 2017-04-22
+- Added security hooks
+
 ### v1.2.2 / 2017-01-21
 - Fixed issue related to sync and async processes
 
