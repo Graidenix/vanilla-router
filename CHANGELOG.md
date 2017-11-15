@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.2.5 / 2017-11-15
+- Hot fix
+
 ### v1.2.4 / 2017-11-15
 - Fixed issue related to missing security hook
 
