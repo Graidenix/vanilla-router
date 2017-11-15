@@ -87,7 +87,7 @@ Router.prototype._getSettings = function (options) {
         settings[key] = options[key] || defaults[key];
     });
 
-    settings.hooks = Object.assign({}, options.hooks || {}, defaults.hooks);
+    settings.hooks = Object.assign({}, defaults.hooks, options.hooks || {});
 
     return settings;
 };
