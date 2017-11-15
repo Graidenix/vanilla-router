@@ -5,7 +5,7 @@
     /**
      * Router
      *
-     * @version: 1.2.3
+     * @version: 1.2.4
      * @author Graidenix
      *
      * @constructor
@@ -85,9 +85,10 @@
         };
 
         options = options || {};
-        ["routes", "mode", "root", "page404", "hooks"].forEach(function (key) {
+        ["routes", "mode", "root", "page404"].forEach(function (key) {
             settings[key] = options[key] || defaults[key];
         });
+        settings.hooks = Object.assign({}, options.hooks || {}, defaults.hooks);
 
         return settings;
     };
