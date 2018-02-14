@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.2.6 / 2018-02-14
+- Added replace method
+
 ### v1.2.5 / 2017-11-15
 - Hot fix
 
