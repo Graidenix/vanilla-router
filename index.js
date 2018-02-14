@@ -3,7 +3,7 @@
 /**
  * Router
  *
- * @version: 1.2.3
+ * @version: 1.2.6
  * @author Graidenix
  *
  * @constructor
@@ -471,6 +471,30 @@ Router.prototype.addUriListener = function () {
 Router.prototype.removeUriListener = function () {
     window.onpopstate = null;
     window.onhashchange = null;
+    return this;
+};
+
+/**
+ * Redirect to a page with replace state
+ *
+ * @param {string} path
+ * @param {object} state
+ * @param {boolean} silent
+ *
+ * @returns {Router}
+ */
+Router.prototype.redirectTo = function (path, state, silent) {
+    path = this._trimSlashes(path) || "";
+    this._pageState = state || null;
+    this._skipCheck = !!silent;
+
+    if (this.mode === "history") {
+        history.replaceState(state, null, this.root + this._trimSlashes(path));
+        return this.check();
+    } else {
+        this._historyIdx--;
+        window.location.hash = path;
+    }
     return this;
 };
 
