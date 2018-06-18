@@ -14,12 +14,20 @@
 function Router(options) {
     var settings = this._getSettings(options);
 
-    this.routes = settings.routes;
+
     this.notFoundHandler = settings.page404;
     this.mode = (!window.history || !window.history.pushState) ? "hash" : settings.mode;
     this.root = settings.root === "/" ? "/" : "/" + this._trimSlashes(settings.root) + "/";
     this.beforeHook = settings.hooks.before;
     this.securityHook = settings.hooks.secure;
+
+    this.routes = [];
+    if (settings.routes && settings.routes.length > 0) {
+        var _this = this;
+        settings.routes.forEach(function (route) {
+            _this.add(route.rule, route.handler, route.options);
+        });
+    }
 
     this._pageState = null;
     this._currentPage = null;
