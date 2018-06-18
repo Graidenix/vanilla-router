@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.2.7 / 2018-06-18
+- Added Typings inside library
+
 ### v1.2.6 / 2018-02-14
 - Added replace method
 
