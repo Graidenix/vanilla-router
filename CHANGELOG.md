@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.2.8 / 2020-03-05
+- Fixed typings
+
 ### v1.2.7 / 2018-06-18
 - Added Typings inside library
 
