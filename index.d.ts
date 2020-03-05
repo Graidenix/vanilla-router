@@ -143,7 +143,7 @@ declare namespace Router {
          *
          * @param {Router.Page} page
          */
-        page404?: (page: Page) => void;
+        page404?: (page: string) => void;
     }
 
     interface PageOptions {
