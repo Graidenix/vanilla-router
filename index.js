@@ -184,7 +184,7 @@
         var rule = uri
             .replace(/([\\\/\-\_\.])/g, "\\$1")
             .replace(/\{[a-zA-Z]+\}/g, "(:any)")
-            .replace(/\:any/g, "[\\w\\-\\_\\.]+")
+            .replace(/\:any/g, "[\\w\\-\\_\\.\\s]+")
             .replace(/\:word/g, "[a-zA-Z]+")
             .replace(/\:num/g, "\\d+");
 
