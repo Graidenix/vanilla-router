@@ -1,11 +1,15 @@
-/* global window */
-(function (window) {
-    "use strict";
+/* global window, module */
+
+;(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+        typeof define === 'function' && define.amd ? define(factory) :
+            global.Router = factory()
+}(this, (function () {
 
     /**
      * Router
      *
-     * @version: 1.2.6
+     * @version: 1.2.7
      * @author Graidenix
      *
      * @constructor
@@ -16,12 +20,20 @@
     function Router(options) {
         var settings = this._getSettings(options);
 
-        this.routes = settings.routes;
+
         this.notFoundHandler = settings.page404;
         this.mode = (!window.history || !window.history.pushState) ? "hash" : settings.mode;
         this.root = settings.root === "/" ? "/" : "/" + this._trimSlashes(settings.root) + "/";
         this.beforeHook = settings.hooks.before;
         this.securityHook = settings.hooks.secure;
+
+        this.routes = [];
+        if (settings.routes && settings.routes.length > 0) {
+            var _this = this;
+            settings.routes.forEach(function (route) {
+                _this.add(route.rule, route.handler, route.options);
+            });
+        }
 
         this._pageState = null;
         this._currentPage = null;
@@ -88,6 +100,7 @@
         ["routes", "mode", "root", "page404"].forEach(function (key) {
             settings[key] = options[key] || defaults[key];
         });
+
         settings.hooks = Object.assign({}, defaults.hooks, options.hooks || {});
 
         return settings;
@@ -586,5 +599,5 @@
         return this.navigateTo(page.path, page.state);
     };
 
-    window.Router = Router;
-})(window);
+    return Router;
+})));
