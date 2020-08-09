@@ -25,6 +25,7 @@
         this.mode = (!window.history || !window.history.pushState) ? "hash" : settings.mode;
         this.root = settings.root === "/" ? "/" : "/" + this._trimSlashes(settings.root) + "/";
         this.beforeHook = settings.hooks.before;
+        this.afterHook = settings.hooks.after;
         this.securityHook = settings.hooks.secure;
 
         this.routes = [];
@@ -83,6 +84,8 @@
             root: "/",
             hooks: {
                 "before": function () {
+                },
+                "after": function() {
                 },
                 "secure": function () {
                     return true;
@@ -388,6 +391,7 @@
                 }
                 _this.beforeHook(page);
                 route.handler.apply(page, match);
+                _this.afterHook(page);
                 _this._pageState = null;
 
                 window.onbeforeunload = function (ev) {
